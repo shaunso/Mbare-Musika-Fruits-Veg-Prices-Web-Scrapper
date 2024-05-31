@@ -1,6 +1,7 @@
 // load the 'Puppeteer' and 'File Server' modules
 const puppeteer = require('puppeteer');
 const fs = require('fs');
+const { Console } = require('console');
 
 // set the URL to the web page that will be scraped
 const url = 'https://zimpricecheck.com/price-updates/fruit-and-vegetable-prices/';
@@ -32,10 +33,10 @@ const getData = async () => {
   // Puppeteer opens a new page 
   const page = await browser.newPage();
   // set the viewport of the page
-  // await page.setViewport({
-  //   width: 1680,
-  //   height: 1080,
-  // })
+  await page.setViewport({
+    width: 1680,
+    height: 1080,
+  })
   // request the web page
   await page.goto(url, {
     waitUntil: 'domcontentloaded',
@@ -69,8 +70,8 @@ const getData = async () => {
         usd_price,
         zig_price
       }
-    })
-  })
+    });
+  });
 
   // stop running Puppeteer
   await browser.close()
@@ -88,27 +89,50 @@ getData().then ( value => {
     console.log(`Data for ${theDate()} successfully saved to JSON...`)
   })
 
+  // appending the date to each CSV file
   for ( let d = 0; d < fileLocation.length; d++ ) {
     // append the date to the first column of the CSV file
-    fs.appendFile(fileLocation[d], value[0].currentDate, err => {
+    fs.appendFile(fileLocation[d], `${value[0].currentDate}`, err => {
       if (err) throw err;
-      console.log(value[0].currentDate);
-    });       
+    })
   }
 
-    // append the scrapped data in 'value' to a CSV file
-  // for ( let i = 0; i < el.length; i++) {
-  //   fs.appendFile('./vfex_market_activity/vfex_market_activity.csv', newLine(), err => {
-  //     if (err) throw err;
-  //     console.log(`${el[i].activity} saved to CSV`);
-  //   });
-  //   // function adds a newline character to the last array element appended to the CSV file
-  //   function newLine() {
-  //     if ( i === el.length - 1 ) {
-  //       return `,${el[i].value.toString().replace("USD$ ","").replaceAll(",","")}\n`
-  //     } else return `,${el[i].value.toString().replace("USD$ ","").replaceAll(",","")}`
-  //   }
-  // }
+  console.log(`Date added to files...`);
 
-    
+  // appending the data to each CSV file
+  for ( let i = 0; i < value.length; i++) {
+    fs.appendFile('./quantity.csv', newLine(), err => {
+      if (err) throw err;
+    });
+    // function adds a newline character to the last array element appended to the CSV file
+    function newLine() {
+      if ( i === value.length - 1 ) {
+        return `,${value[i].quantity}\n`
+      } else return `,${value[i].quantity}`
+    }}
+
+  for ( let i = 0; i < value.length; i++) {
+    fs.appendFile('./usd_price.csv', newLine(), err => {
+      if (err) throw err;
+    });
+    // function adds a newline character to the last array element appended to the CSV file
+    function newLine() {
+      if ( i === value.length - 1 ) {
+        return `,${value[i].usd_price}\n`
+      } else return `,${value[i].usd_price}`
+    }
+  }
+
+  for ( let i = 0; i < value.length; i++) {
+    fs.appendFile('./zig_price.csv', newLine(), err => {
+      if (err) throw err;
+    });
+    // function adds a newline character to the last array element appended to the CSV file
+    function newLine() {
+      if ( i === value.length - 1 ) {
+        return `,${value[i].zig_price}\n`
+      } else return `,${value[i].zig_price}`
+    }
+  }
+  console.log(`Data saved to CSV files...`)    
 });
