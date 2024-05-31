@@ -15,6 +15,16 @@ function theDate() {
   return year.concat("-", month, "-", day);
 }
 
+// an array storing the paths to each CSV file
+// [0] = quantity.csv
+const itemUnits = './quantity.csv' ;
+// [1] = usd_price.csv
+const itemUSD = './usd_price.csv' ;
+// [2] = zig_price.csv
+const itemZiG = './zig_price.csv' ;
+
+const fileLocation = [itemUnits, itemUSD, itemZiG];
+
 // getData set to IIFE
 const getData = async () => {
   // launch Puppeteer
@@ -78,4 +88,27 @@ getData().then ( value => {
     console.log(`Data for ${theDate()} successfully saved to JSON...`)
   })
 
+  for ( let d = 0; d < fileLocation.length; d++ ) {
+    // append the date to the first column of the CSV file
+    fs.appendFile(fileLocation[d], value[0].currentDate, err => {
+      if (err) throw err;
+      console.log(value[0].currentDate);
+    });       
+  }
+
+    // append the scrapped data in 'value' to a CSV file
+  // for ( let i = 0; i < el.length; i++) {
+  //   fs.appendFile('./vfex_market_activity/vfex_market_activity.csv', newLine(), err => {
+  //     if (err) throw err;
+  //     console.log(`${el[i].activity} saved to CSV`);
+  //   });
+  //   // function adds a newline character to the last array element appended to the CSV file
+  //   function newLine() {
+  //     if ( i === el.length - 1 ) {
+  //       return `,${el[i].value.toString().replace("USD$ ","").replaceAll(",","")}\n`
+  //     } else return `,${el[i].value.toString().replace("USD$ ","").replaceAll(",","")}`
+  //   }
+  // }
+
+    
 });
