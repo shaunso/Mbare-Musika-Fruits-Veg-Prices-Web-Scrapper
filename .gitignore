@@ -1,0 +1,6 @@
+node_modules/
+json/
+screenshot/
+quantity.csv
+usd_price.csv
+zig_price.csv
